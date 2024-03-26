@@ -49,14 +49,15 @@ podAnnotations: {}
 podSecurityContext: {}
 
 securityContext:
-  runAsNonRoot: false
+  runAsNonRoot: true
   seccompProfile:
     type: RuntimeDefault
   allowPrivilegeEscalation: false
   capabilities:
     drop:
       - ALL
-  readOnlyRootFilesystem: false
+  readOnlyRootFilesystem: true
+  runAsUser: 1000
 
 resources:
   requests:
