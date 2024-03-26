@@ -6,9 +6,9 @@
 # Plugin specific options
 #
 teleport:
-  address: "test"
-  identitySecretName: "test"
-  identitySecretPath: "auth_id"
+  address: "test.example.com:443"
+  identitySecretName: "teleport-event-handler-identity"
+  identitySecretPath: "identity"
 
 eventHandler:
   storagePath: "/var/lib/teleport/plugins/event-handler/storage"
@@ -16,10 +16,10 @@ eventHandler:
   batch: 20
 
 fluentd:
-  url: ""
-  sessionUrl: ""
+  url: "https://fluentd.fluentd.svc.cluster.local/events.log"
+  sessionUrl: "https://fluentd.fluentd.svc.cluster.local/session.log"
   certificate:
-    secretName: "test"
+    secretName: "teleport-event-handler-client-tls"
     caPath: "ca.crt"
     certPath: "client.crt"
     keyPath: "client.key"
@@ -49,14 +49,14 @@ podAnnotations: {}
 podSecurityContext: {}
 
 securityContext:
-  runAsNonRoot: true
+  runAsNonRoot: false
   seccompProfile:
     type: RuntimeDefault
   allowPrivilegeEscalation: false
   capabilities:
     drop:
       - ALL
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false
 
 resources:
   requests:

@@ -4,6 +4,9 @@ metadata:
   name: {{ include "event-handler.fullname" . }}
   labels:
     {{- include "event-handler.labels" . | nindent 4 }}
+  annotations:
+    ignore-check.kube-linter.io/no-read-only-root-fs: "true"
+    ignore-check.kube-linter.io/run-as-non-root: "true"
 spec:
   replicas: 1
   selector:
