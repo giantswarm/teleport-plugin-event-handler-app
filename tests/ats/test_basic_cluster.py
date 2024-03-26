@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import List
 
+import re
 import pykube
 import pytest
 from pytest_helm_charts.clusters import Cluster
