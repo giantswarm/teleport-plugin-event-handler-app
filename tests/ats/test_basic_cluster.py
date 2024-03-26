@@ -78,7 +78,8 @@ def app_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
     logger.info("Fetching deployments to identify those related to the Teleport plugin.")
     all_deployments = pykube.Deployment.objects(kube_cluster.kube_client).filter(namespace=namespace_name)
     # Filter deployments by name pattern
-    teleport_deployments = [d for d in all_deployments if re.match(r".*-teleport-plugin-event-handler", d.name)]
+    pattern = r'.*-event-handler'
+    teleport_deployments = [d for d in all_deployments if re.match(pattern, d.name)]
     if not teleport_deployments:
         logger.warning("No Teleport plugin deployments found with the expected name pattern.")
     else:
