@@ -35,55 +35,8 @@ def check_secret_exists(secret_name, namespace):
 
 @pytest.fixture(scope="module")
 def teleport_cert(kube_cluster: Cluster):
-    teleport_cluster_address = "test.example.com:443"
-
-    logger.info("Generating certificate files for Teleport plugin.")
-    # Run the Docker command to generate the certificate files
-    run_subprocess(
-        [
-            "docker",
-            "run",
-            "-v",
-            f"{Path.cwd()}:/opt/teleport-plugin",
-            "-w",
-            "/opt/teleport-plugin",
-            "public.ecr.aws/gravitational/teleport-plugin-event-handler:15.1.9",
-            "configure",
-            ".",
-            teleport_cluster_address,
-        ]
-    )
-
-    # Check if certificate files exist
-    certificate_files = ["ca.crt", "client.crt", "client.key"]
-    all_files_exist = True
-    for file_name in certificate_files:
-        file_path = Path.cwd() / file_name  # Adjust path as necessary
-        if not file_path.exists():
-            logger.error(f"Certificate file {file_name} does not exist at {file_path}")
-            all_files_exist = False
-        else:
-            logger.info(f"Found certificate file {file_name} at {file_path}")
-
-    # Proceed to create the Kubernetes secret only if all files exist
-    if all_files_exist:
-        logger.info("Creating Kubernetes secret for Teleport plugin.")
-        run_subprocess(
-            [
-                "kubectl",
-                "create",
-                "secret",
-                "generic",
-                "teleport-event-handler-client-tls",
-                "--from-file=ca.crt=ca.crt",
-                "--from-file=client.crt=client.crt",
-                "--from-file=client.key=client.key",
-                "-n",
-                namespace_name,
-            ]
-        )
-    else:
-        logger.error("Not all required certificate files were found. Skipping secret creation.")
+    logger.info("Applying certs.yaml to configure Kubernetes resources.")
+    run_subprocess(["kubectl", "apply", "-f", "certs.yaml", "-n", namespace_name])
 
 @pytest.fixture(scope="module")
 def identity_file():
