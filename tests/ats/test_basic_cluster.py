@@ -48,20 +48,11 @@ def teleport_cert(kube_cluster: Cluster):
         ],
         check=True,
     )
+
 @pytest.fixture(scope="module")
-def fake_secret(kube_cluster: Cluster):
-    secret_data = {
-        "auth_id": "test"
-    }
-
-    secret = client.V1Secret(
-        metadata=client.V1ObjectMeta(name="test-id"),
-        type="Opaque",
-        data=secret_data
-    )
-
-    kube_cluster.kube_client.create_namespaced_secret(namespace_name, secret)
-
+def identity_file():
+    # Apply the identity.yaml file using kubectl
+    subprocess.run(["kubectl", "apply", "-f", "identity.yaml"], check=True)
 # scope "module" means this is run only once, for the first test case requesting! It might be tricky
 # if you want to assert this multiple times
 @pytest.fixture(scope="module")
