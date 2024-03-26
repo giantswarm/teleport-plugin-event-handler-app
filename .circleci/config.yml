@@ -10,7 +10,7 @@ workflows:
           name: push-to-giantswarm-catalog
           context: architect
           executor: app-build-suite
-          chart: teleport-event-handler
+          chart: teleport-plugin-event-handler
           app_catalog: giantswarm-catalog
           app_catalog_test: giantswarm-test-catalog
           persist_chart_archive: true
@@ -22,7 +22,7 @@ workflows:
           name: push-to-control-plane-catalog
           context: architect
           executor: app-build-suite
-          chart: teleport-event-handler
+          chart: teleport-plugin-event-handler
           app_catalog: control-plane-catalog
           app_catalog_test: control-plane-test-catalog
           filters:
@@ -42,7 +42,7 @@ workflows:
           name: push-to-capa-app-collection
           context: architect
           app_catalog: control-plane-catalog
-          app_name: teleport-event-handler
+          app_name: teleport-plugin-event-handler
           app_namespace: kube-system
           app_collection_repo: capa-app-collection
           requires:
@@ -57,7 +57,7 @@ workflows:
           name: push-to-capz-app-collection
           context: architect
           app_catalog: control-plane-catalog
-          app_name: teleport-event-handler
+          app_name: teleport-plugin-event-handler
           app_namespace: kube-system
           app_collection_repo: capz-app-collection
           requires:
@@ -72,7 +72,7 @@ workflows:
           name: push-to-gcp-app-collection
           context: architect
           app_catalog: control-plane-catalog
-          app_name: teleport-event-handler
+          app_name: teleport-plugin-event-handler
           app_namespace: kube-system
           app_collection_repo: gcp-app-collection
           requires:
@@ -87,7 +87,7 @@ workflows:
           name: push-to-cloud-director-app-collection
           context: architect
           app_catalog: control-plane-catalog
-          app_name: teleport-event-handler
+          app_name: teleport-plugin-event-handler
           app_namespace: kube-system
           app_collection_repo: cloud-director-app-collection
           requires:
@@ -102,7 +102,7 @@ workflows:
           name: push-to-vsphere-app-collection
           context: architect
           app_catalog: control-plane-catalog
-          app_name: teleport-event-handler
+          app_name: teleport-plugin-event-handler
           app_namespace: kube-system
           app_collection_repo: vsphere-app-collection
           requires:
