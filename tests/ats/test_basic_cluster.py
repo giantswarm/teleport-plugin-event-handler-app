@@ -74,20 +74,31 @@ def identity_file():
 
 @pytest.fixture(scope="module")
 def app_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
-    logger.info("Waiting for deployments to be ready.")
-    deployments = wait_for_deployments_to_run(
-        kube_cluster.kube_client,
-        ["teleport-plugin-event-handler"],
-        namespace_name,
-        timeout,
-    )
-    return deployments
+    logger.info("Fetching deployments to identify those related to the Teleport plugin.")
+    all_deployments = pykube.Deployment.objects(kube_cluster.kube_client).filter(namespace=namespace_name)
+    # Filter deployments by name pattern
+    teleport_deployments = [d for d in all_deployments if re.match(r".*-teleport-plugin-event-handler", d.name)]
+    if not teleport_deployments:
+        logger.warning("No Teleport plugin deployments found with the expected name pattern.")
+    else:
+        logger.info(f"Found {len(teleport_deployments)} deployments matching the Teleport plugin pattern.")
+
+    # Ensure deployments are ready
+    for deployment in teleport_deployments:
+        wait_for_deployments_to_run(
+            kube_cluster.kube_client,
+            [deployment.name],
+            namespace_name,
+            timeout,
+        )
+    return teleport_deployments
 
 @pytest.mark.smoke
 @pytest.mark.upgrade
 @pytest.mark.flaky(reruns=5, reruns_delay=10)
 def test_pods_available(kube_cluster: Cluster, app_deployment: List[pykube.Deployment]):
+    assert app_deployment, "No deployments found matching the Teleport plugin pattern."
     for d in app_deployment:
-        ready_replicas = int(d.obj["status"]["readyReplicas"])
+        ready_replicas = int(d.obj["status"].get("readyReplicas", 0))
         logger.info(f"Checking deployment {d.name} for ready replicas: {ready_replicas}")
         assert ready_replicas > 0, f"Deployment {d.name} has {ready_replicas} ready replicas, expected more than 0."
