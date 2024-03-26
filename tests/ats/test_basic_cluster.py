@@ -1,9 +1,7 @@
 import logging
 import subprocess
-from contextlib import contextmanager
 from pathlib import Path
 from typing import List
-
 import re
 import pykube
 import pytest
@@ -31,12 +29,14 @@ def run_subprocess(command: list, check: bool = True):
         if check:
             raise
 
+def check_secret_exists(secret_name, namespace):
+    result = run_subprocess(["kubectl", "get", "secret", secret_name, "-n", namespace], check=False)
+    return result.returncode == 0
+
 @pytest.fixture(scope="module")
 def teleport_cert(kube_cluster: Cluster):
     teleport_cluster_address = "test.example.com:443"
-
     logger.info("Generating certificate files for Teleport plugin.")
-    # Run the Docker command to generate the certificate files
     run_subprocess(
         [
             "docker",
@@ -53,7 +53,6 @@ def teleport_cert(kube_cluster: Cluster):
     )
 
     logger.info("Creating Kubernetes secret for Teleport plugin.")
-    # Create the secret using the generated certificate files
     run_subprocess(
         [
             "kubectl",
@@ -67,17 +66,18 @@ def teleport_cert(kube_cluster: Cluster):
         ]
     )
 
+    if not check_secret_exists("teleport-event-handler-client-tls", namespace_name):
+        raise RuntimeError("Failed to create secret for Teleport plugin.")
+
 @pytest.fixture(scope="module")
 def identity_file():
     logger.info("Applying identity.yaml to configure Kubernetes resources.")
-    # Apply the identity.yaml file using kubectl
     run_subprocess(["kubectl", "apply", "-f", "identity.yaml", "-n", namespace_name])
 
 @pytest.fixture(scope="module")
-def app_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
+def app_deployment(kube_cluster: Cluster, teleport_cert, identity_file) -> List[pykube.Deployment]:
     logger.info("Fetching deployments to identify those related to the Teleport plugin.")
     all_deployments = pykube.Deployment.objects(kube_cluster.kube_client).filter(namespace=namespace_name)
-    # Filter deployments by name pattern
     pattern = r'.*-event-handler'
     teleport_deployments = [d for d in all_deployments if re.match(pattern, d.name)]
     if not teleport_deployments:
@@ -85,7 +85,6 @@ def app_deployment(kube_cluster: Cluster) -> List[pykube.Deployment]:
     else:
         logger.info(f"Found {len(teleport_deployments)} deployments matching the Teleport plugin pattern.")
 
-    # Ensure deployments are ready
     for deployment in teleport_deployments:
         wait_for_deployments_to_run(
             kube_cluster.kube_client,
