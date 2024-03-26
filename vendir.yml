@@ -1,0 +1,19 @@
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+directories:
+- path: helm
+  contents:
+  - path: teleport-event-handler
+    git:
+      url: https://github.com/giantswarm/teleport-plugins-upstream
+      ref: main
+      depth: 1
+    includePaths:
+    - event-handler/**/*
+    newRootPath: .
+    excludePaths:
+    - event-handler/charts/event-handler/OWNERS
+    - event-handler/charts/event-handler/changelog/*
+    ignorePaths:
+    - .kube-linter.yaml
+    - values.schema.json

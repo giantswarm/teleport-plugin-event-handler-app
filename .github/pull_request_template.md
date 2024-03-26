@@ -1,11 +1,13 @@
 <!--
-Not all PRs will require all tests to be carried out. Delete where appropriate.
+Not all PRs will require all tests to be carried out. Refer to the
+testing doc below and delete where appropriate.
+
+https://intranet.giantswarm.io/docs/dev-and-releng/app-developer-processes/teleport-event-handler/
 -->
 
 <!--
-MODIFY THIS AFTER your new app repo is in https://github.com/giantswarm/github
-@team-halo-engineers will be automatically requested for review once
-this PR has been submitted. (But not for drafts)
+@team-bigmac will be automatically requested for review once
+this PR has been submitted.
 -->
 
 This PR:
@@ -14,24 +16,24 @@ This PR:
 
 ### Testing
 
-Description on how {APP-NAME} can be tested.
+#### Optional app
 
-- [ ] fresh install works
-  - [ ] AWS
-  - [ ] Azure
-  - [ ] KVM
-- [ ] upgrade from previous version works
-  - [ ] AWS
-  - [ ] Azure
-  - [ ] KVM
+- [ ] fresh install
+- [ ] upgrade from previous version
+
+#### Pre-installed app
+
+- [ ] fresh install during cluster creation
+- [ ] upgrade from previous version in a pre-existing cluster
 
 #### Other testing
 
-Description of features to additionally test for {APP-NAME} installations.
+<!--
+Install ingress-nginx and hello-world to obtain a certificate,
+then upgrade the teleport-event-handler-app and ensure the CRs are still reconciled after the upgrade.
+-->
 
 - [ ] check reconciliation of existing resources after upgrading
-- [ ] X still works after upgrade
-- [ ] Y is installed correctly
 
 <!--
 Changelog must always be updated.
@@ -40,4 +42,3 @@ Changelog must always be updated.
 ### Checklist
 
 - [ ] Update changelog in CHANGELOG.md.
-- [ ] Make sure `values.yaml` and `values.schema.json` are valid.
