@@ -1,6 +1,6 @@
 replace-chart-version-with-git: true
 generate-metadata: true
-chart-dir: helm/event-handler
+chart-dir: helm/teleport-plugin-event-handler
 
 # CI overwrites this, check .circleci/config.yaml
 catalog-base-url: https://giantswarm.github.io/default-catalog/
