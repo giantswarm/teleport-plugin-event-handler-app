@@ -6,8 +6,8 @@
 # Plugin specific options
 #
 teleport:
-  address: "test"
-  identitySecretName: "test"
+  address: "test.example.com:443"
+  identitySecretName: "test-id"
   identitySecretPath: "auth_id"
 
 eventHandler:
@@ -16,8 +16,8 @@ eventHandler:
   batch: 20
 
 fluentd:
-  url: ""
-  sessionUrl: ""
+  url: "https://fluentd.fluentd.svc.cluster.local/events.log"
+  sessionUrl: "https://fluentd.fluentd.svc.cluster.local/session.log"
   certificate:
     secretName: "test"
     caPath: "ca.crt"
@@ -49,14 +49,14 @@ podAnnotations: {}
 podSecurityContext: {}
 
 securityContext:
-  runAsNonRoot: true
+  runAsNonRoot: false
   seccompProfile:
     type: RuntimeDefault
   allowPrivilegeEscalation: false
   capabilities:
     drop:
       - ALL
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false
 
 resources:
   requests:

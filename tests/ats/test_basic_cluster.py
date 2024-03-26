@@ -16,22 +16,52 @@ timeout: int = 360
 
 
 @pytest.fixture(scope="module")
+def teleport_cert(kube_cluster: Cluster):
+    teleport_cluster_address = "test.example.com:443"
+
+    # Run the Docker command to generate the certificate files
+    subprocess.run(
+        [
+            "docker",
+            "run",
+            "-v",
+            f"{Path.cwd()}:/opt/teleport-plugin",
+            "-w",
+            "/opt/teleport-plugin",
+            "public.ecr.aws/gravitational/teleport-plugin-event-handler:15.1.9",
+            "configure",
+            ".",
+            teleport_cluster_address,
+        ],
+        check=True,
+    )
+
+    # Create the secret using the generated certificate files
+    subprocess.run(
+        [
+            "kubectl",
+            "create",
+            "secret",
+            "generic",
+            "teleport-event-handler-client-tls",
+            "--from-file=ca.crt=ca.crt,client.crt=client.crt,client.key=client.key",
+        ],
+        check=True,
+    )
+@pytest.fixture(scope="module")
 def fake_secret(kube_cluster: Cluster):
     secret_data = {
-        "ca.crt": "fake-ca-crt",
-        "client.crt": "fake-client-crt",
-        "client.key": "fake-client-key"
+        "auth_id": "test"
     }
 
     secret = client.V1Secret(
-        metadata=client.V1ObjectMeta(name="test"),
+        metadata=client.V1ObjectMeta(name="test-id"),
         type="Opaque",
         data=secret_data
     )
 
     kube_cluster.kube_client.create_namespaced_secret(namespace_name, secret)
-    yield
-    kube_cluster.kube_client.delete_namespaced_secret("test", namespace_name)
+
 # scope "module" means this is run only once, for the first test case requesting! It might be tricky
 # if you want to assert this multiple times
 @pytest.fixture(scope="module")
