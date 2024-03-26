@@ -3,7 +3,7 @@ kind: Config
 directories:
 - path: helm
   contents:
-  - path: teleport-event-handler
+  - path: teleport-plugin-event-handler
     git:
       url: https://github.com/giantswarm/teleport-plugins-upstream
       ref: main
