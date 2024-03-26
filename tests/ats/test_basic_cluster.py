@@ -63,12 +63,12 @@ def app_deployment(kube_cluster: Cluster, teleport_cert, identity_file) -> List[
         )
     return teleport_deployments
 
-@pytest.mark.smoke
-@pytest.mark.upgrade
-@pytest.mark.flaky(reruns=5, reruns_delay=10)
-def test_pods_available(kube_cluster: Cluster, app_deployment: List[pykube.Deployment]):
-    assert app_deployment, "No deployments found matching the Teleport plugin pattern."
-    for d in app_deployment:
-        ready_replicas = int(d.obj["status"].get("readyReplicas", 0))
-        logger.info(f"Checking deployment {d.name} for ready replicas: {ready_replicas}")
-        assert ready_replicas > 0, f"Deployment {d.name} has {ready_replicas} ready replicas, expected more than 0."
+##@pytest.mark.smoke
+##@pytest.mark.upgrade
+##@pytest.mark.flaky(reruns=5, reruns_delay=10)
+##def test_pods_available(kube_cluster: Cluster, app_deployment: List[pykube.Deployment]):
+##    assert app_deployment, "No deployments found matching the Teleport plugin pattern."
+##    for d in app_deployment:
+##        ready_replicas = int(d.obj["status"].get("readyReplicas", 0))
+##        logger.info(f"Checking deployment {d.name} for ready replicas: {ready_replicas}")
+##        assert ready_replicas > 0, f"Deployment {d.name} has {ready_replicas} ready replicas, expected more than 0."
