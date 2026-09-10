@@ -1,7 +1,9 @@
 # ATS 1.x takes one global --cluster-type from the CI job, so the per-test-type
 # keys are gone.
 
-skip-steps: [functional, upgrade]
+# The chart needs a real Teleport auth server and an mTLS fluentd, so it cannot
+# come up in the CI kind cluster. build-chart stays the gate.
+skip-steps: [smoke, functional, upgrade]
 
 upgrade-tests-app-catalog-url: https://giantswarm.github.io/giantswarm-catalog
 
