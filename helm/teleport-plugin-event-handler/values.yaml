@@ -6,28 +6,51 @@
 # Plugin specific options
 #
 teleport:
+  # -- Host/port combination of the teleport auth server
   address: "test.example.com:443"
+  # -- Name of the Kubernetes secret that contains the credentials for the connection
   identitySecretName: "teleport-event-handler-identity"
+  # -- Key of the field in the secret specified by teleport.identitySecretName
   identitySecretPath: "identity"
 
 eventHandler:
+  # -- Path to the directory where event-handler's state is stored
   storagePath: "/var/lib/teleport/plugins/event-handler/storage"
+  # -- Maximum time to wait for incoming events before sending them to fluentd.
   timeout: "10s"
+  # -- Maximum number of events fetched from Teleport in one request
   batch: 20
 
 fluentd:
+  # -- URL of fluentd where the event logs will be sent to.
   url: "https://fluentd.fluentd.svc.cluster.local/events.log"
+  # -- URL of fluentd where the session logs will be sent to.
   sessionUrl: "https://fluentd.fluentd.svc.cluster.local/session.log"
   certificate:
+    # -- Name of the secret where credentials for the connection is stored. It must contain
+    # the client's private key, certificate and fluentd's CA certificate. See the default
+    # paths below.
     secretName: "teleport-event-handler-client-tls"
+    # -- Path of the CA certificate in the secret described by fluentd.certificate.secretName.
     caPath: "ca.crt"
+    # -- Path of the client's certificate in the secret described by fluentd.certificate.secretName.
     certPath: "client.crt"
+    # -- Path of the client private key in the secret described by fluentd.certificate.secretName.
     keyPath: "client.key"
 
 persistentVolumeClaim:
+  # -- Instructs the Helm chart to include a PersistentVolumeClaim for the storage. This
+  # storage will be mounted to the path specified by eventHandler.storagePath.
   enabled: false
+  # -- Sets the size of the created PersistentVolumeClaim. Don't forget to append the proper
+  # suffix!
   size: 1Gi
+  # -- Sets the storage class name of the created PersistentVolumeClaim. Kubernetes will use
+  # the default one when omitted.
   storageClassName: ""
+  # -- Specifies an already existing PersistentVolumeClaim which should be mounted to the path
+  # specified by eventHandler.storagePath. persistentVolumeClaim.enabled must be set to false
+  # for this option to take precedence. Ignored when persistentVolumeClaim.enabled is true.
   existingClaim: ""
   volumeName: "storage"
 
