@@ -1,8 +1,8 @@
-smoke-tests-cluster-type: kind
+# ATS 1.x takes one global --cluster-type from the CI job, so the per-test-type
+# keys are gone.
 
 skip-steps: [functional, upgrade]
 
-upgrade-tests-cluster-type: kind
 upgrade-tests-app-catalog-url: https://giantswarm.github.io/giantswarm-catalog
 
 # --------
