@@ -9,10 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- The chart unit test snapshots match the chart again. They recorded a rendering that is several chart
-  changes old, so both suites failed: the identity file path, the two volume `secretName` values and the
-  container resource limits had all moved on without the snapshots. Nothing in the repository ran
-  `helm unittest`, so no build reported it.
+- Update chart unit test snapshots to match the chart again.
 
 
 - The `helm.sh/chart` label is valid for long chart versions: the 63-character cut trims the whole trailing run of `-`, `.` and `_`.
